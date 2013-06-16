@@ -6,17 +6,35 @@
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c ; f c") 'fuelphp-find-controller)
     (define-key map (kbd "C-c ; f m") 'fuelphp-find-model)
+    (define-key map (kbd "C-c ; f v") 'fuelphp-find-view)
     map)
   "Keymap for `fuelphp-mode'.")
 
+(setq fuelphp-file-type-alist
+      '(("m" "model")
+        ("c" "controller")
+        ("v" "views")))
 
+(defun fuelphp-find-file ()
+  "find model とかを1まとめにしたい"
+  (interactive)
+  (let* ((type (cadr (assoc (completing-read "" fuelphp-file-type-alist nil t) fuelphp-file-type-alist)))
+         (root (fuelphp-root))
+         (path (concat "/fuel/app/classes/" (file-name-nondirectory type) "/")))
+    (if root
+        (find-file
+         (concat root "/" path
+                 (ido-completing-read
+                  (concat (capitalize type) ": ")
+                  (let ((dir-names (fuelphp-recursive-directory-files (concat root path))))
+                    (loop for dir-name in dir-names
+                          if (string-match "\\.php$" dir-name)
+                          collect dir-name))))))))
 
 (defun fuelphp-recursive-directory-files (dir)
   "再帰的lsみたいなの"
-  (message dir)
   (let* ((files (directory-files dir))
          (files (loop for file in files
-                      do (message file)
                       if (not (string-match "/?\\.\\{1,2\\}$" file))
                       collect file)))
     (fuelphp-flatten
@@ -27,72 +45,88 @@
                      file)))))
 
 (defun fuelphp-flatten (list)
-  (cond
-   ((null list) nil)
-   ((atom list) (list list))
-   (t
-    (append (fuelphp-flatten (car list)) (fuelphp-flatten (cdr list))))))
-
-
-(defun fuelphp-find-controller ()
-  "今いるディレクトリが
-fuel/app/views
-fuel/app/classes/model
-fuel/app/classes/controller
-辺りの時にcontrollerをfindするメソッド。
-とりあえずは一発での移動機能は無し
-"
-  (interactive)
-  (let ((dir default-directory)
-        (controller-path "/fuel/app/classes/controller/"))
-    (if (string-match "^\\(.*\\)/fuel/app/\\(classes/model\\|classes/controller\\|views\\)/" dir)
-        (find-file
-         (concat (match-string 1 dir) controller-path
-                 (ido-completing-read
-                  "Controller: "
-                  (let ((dir-names (fuelphp-recursive-directory-files (concat (match-string 1 dir) controller-path))))
-                    (loop for dir-name in dir-names
-                          if (string-match "\\.php$" dir-name)
-                          collect dir-name))))))))
+  "入れ子になったリストをflatにする関数"
+  (let ((ret-list '()))
+    (loop for item in list
+          if (consp item)
+          do (loop for i in (fuelphp-flatten-2 item)
+                   do (push i ret-list))
+          if (atom item)
+          do (push item ret-list))
+    (reverse ret-list)))
 
 (defun fuelphp-find-model ()
   "今いるディレクトリが
-fuel/app/views
-fuel/app/classes/model
-fuel/app/classes/controller
-辺りの時にcontrollerをfindするメソッド。
+fuelphpのプロジェクト内の時に
+辺りの時にmodelをfindするメソッド。
 とりあえずは一発での移動機能は無し
 "
   (interactive)
-  (let ((dir default-directory)
-        (model-path "/fuel/app/classes/model/"))
-    (if (string-match "^\\(.*\\)/fuel/app/\\(classes/model\\|classes/controller\\|views\\)/" dir)
+  (let ((root (fuelphp-root))
+        (path "/fuel/app/classes/model/"))
+    (if root
         (find-file
-         (concat (match-string 1 dir) model-path
+         (concat root "/" path
                  (ido-completing-read
-                  "Controller: "
-                  (let ((dir-names (fuelphp-recursive-directory-files (concat (match-string 1 dir) model-path))))
+                  "Model: "
+                  (let ((dir-names (fuelphp-recursive-directory-files (concat root path))))
                     (loop for dir-name in dir-names
                           if (string-match "\\.php$" dir-name)
                           collect dir-name))))))))
 
+(defun fuelphp-find-controller ()
+  "今いるディレクトリが
+fuelphpのプロジェクト内の時に
+辺りの時にcontrollerをfindするメソッド。
+とりあえずは一発での移動機能は無し
+"
+  (interactive)
+  (let ((root (fuelphp-root))
+        (path "/fuel/app/classes/controller/"))
+    (if root
+        (find-file
+         (concat root "/" path
+                 (ido-completing-read
+                  "Controller: "
+                  (let ((dir-names (fuelphp-recursive-directory-files (concat root path))))
+                    (loop for dir-name in dir-names
+                          if (string-match "\\.php$" dir-name)
+                          collect dir-name))))))))
+
+(defun fuelphp-find-view ()
+  "今いるディレクトリが
+fuelphpのプロジェクト内の時に
+辺りの時にviewをfindするメソッド。
+とりあえずは一発での移動機能は無し
+"
+  (interactive)
+  (let ((root (fuelphp-root))
+        (path "/fuel/app/views/"))
+    (if root
+        (find-file
+         (concat root "/" path
+                 (ido-completing-read
+                  "View: "
+                  (let ((dir-names (fuelphp-recursive-directory-files (concat root path))))
+                    (loop for dir-name in dir-names
+                          if (string-match "\\.php$" dir-name)
+                          collect dir-name))))))))
+
+
 (defun fuelphp-root (&optional dir)
-  (or dir (setq dir default-directory))
-  (message dir)
-  (if (file-exists-p (expand-file-name
-                      "config.php" (expand-file-name "fuel/app/config" dir)))
-      dir
-    (let ((new-dir (expand-file-name (file-name-as-directory "..") dir)))
-      ;; regexp to match windows roots, tramp roots, or regular posix roots
-      (unless (string-match "\\(^[[:alpha:]]:/$\\|^/[^\/]+:/?$\\|^/$\\)" dir)
-        (fuelphp-root new-dir)))))
+  (let* ((dir (or dir default-directory))
+         (config-dir (expand-file-name "fuel/app/config" dir)))
+    (if (file-exists-p (expand-file-name "config.php" config-dir))
+        dir
+      (let ((parent-dir (expand-file-name (file-name-as-directory "..") dir)))
+        (unless (string= "/" dir)
+          (fuelphp-root parent-dir))))))
 
 (defun fuelphp-launch ()
   (let ((root (fuelphp-root)))
     (if root
         (fuelphp-mode 1)
       (fuelphp-mode -1))))
-
 
 (defadvice cd (after fuelphp-on-cd activate)
   (fuelphp-launch))
