@@ -142,6 +142,7 @@ If not FuelPHP directory, then return nil."
   (fuelphp-launch))
 
 (add-hook 'find-file-hook 'fuelphp-launch)
+(add-hook 'window-configuration-change-hook 'fuelphp-launch)
 
 (define-minor-mode fuelphp-mode
   "FuelPHP mode for emacs"
