@@ -45,7 +45,8 @@
                      file)))))
 
 (defun fuelphp-flatten (list)
-  "入れ子になったリストをflatにする関数"
+  "入れ子になったリストをflatにする関数
+flatten nested alist."
   (let ((ret-list '()))
     (loop for item in list
           if (consp item)
@@ -60,6 +61,8 @@
 fuelphpのプロジェクト内の時に
 辺りの時にmodelをfindするメソッド。
 とりあえずは一発での移動機能は無し
+
+Find Model files in FuelPHP's project
 "
   (interactive)
   (let ((root (fuelphp-root))
@@ -79,6 +82,8 @@ fuelphpのプロジェクト内の時に
 fuelphpのプロジェクト内の時に
 辺りの時にcontrollerをfindするメソッド。
 とりあえずは一発での移動機能は無し
+
+Find Controller files in FuelPHP's project
 "
   (interactive)
   (let ((root (fuelphp-root))
@@ -98,6 +103,8 @@ fuelphpのプロジェクト内の時に
 fuelphpのプロジェクト内の時に
 辺りの時にviewをfindするメソッド。
 とりあえずは一発での移動機能は無し
+
+Find View files in FuelPHP's project
 "
   (interactive)
   (let ((root (fuelphp-root))
@@ -114,6 +121,8 @@ fuelphpのプロジェクト内の時に
 
 
 (defun fuelphp-root (&optional dir)
+  "Find FuelPHP Project root directory.
+If not FuelPHP directory, then return nil."
   (let* ((dir (or dir default-directory))
          (config-dir (expand-file-name "fuel/app/config" dir)))
     (if (file-exists-p (expand-file-name "config.php" config-dir))
@@ -123,6 +132,7 @@ fuelphpのプロジェクト内の時に
           (fuelphp-root parent-dir))))))
 
 (defun fuelphp-launch ()
+"launch fuelphp-mode"
   (let ((root (fuelphp-root)))
     (if root
         (fuelphp-mode 1)
@@ -134,7 +144,7 @@ fuelphpのプロジェクト内の時に
 (add-hook 'find-file-hook 'fuelphp-launch)
 
 (define-minor-mode fuelphp-mode
-  "fuelphp mode for emacs"
+  "FuelPHP mode for emacs"
   nil
   :keymap fuelphp-mode-map
   :lighter " fuelphp")
