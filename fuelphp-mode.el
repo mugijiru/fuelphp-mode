@@ -4,9 +4,10 @@
 (require 'cl)
 (defvar fuelphp-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c ; f c") 'fuelphp-find-controller)
-    (define-key map (kbd "C-c ; f m") 'fuelphp-find-model)
-    (define-key map (kbd "C-c ; f v") 'fuelphp-find-view)
+    (define-key map (kbd "C-c , f c") 'fuelphp-find-controller)
+    (define-key map (kbd "C-c , f m") 'fuelphp-find-model)
+    (define-key map (kbd "C-c , f v") 'fuelphp-find-view)
+    (define-key map (kbd "C-c , s") 'fuelphp-server)
     map)
   "Keymap for `fuelphp-mode'.")
 
