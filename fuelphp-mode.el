@@ -50,7 +50,7 @@ flatten nested alist."
   (let ((ret-list '()))
     (loop for item in list
           if (consp item)
-          do (loop for i in (fuelphp-flatten-2 item)
+          do (loop for i in (fuelphp-flatten item)
                    do (push i ret-list))
           if (atom item)
           do (push item ret-list))
