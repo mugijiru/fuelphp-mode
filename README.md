@@ -26,7 +26,9 @@ FuelPHPマイナーモードが有効な時には以下のコマンドが使用�
 | C-c . f c | Controllerファイルを開く |
 | C-c . f v | Viewファイルを開く       |
 | C-c . s   | サーバを起動する         |
+| C-c . c   | コンソールを起動する     |
 | C-c . g   | fuel/app内をgrepする     |
+
 
 
 ライセンス
