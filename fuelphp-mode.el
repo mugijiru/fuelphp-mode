@@ -5,7 +5,7 @@
 ;; Author: Mugijiru <mugijiru.dev@gmail.com>
 ;; URL: https://github.com/mugijiru/fuelphp-mode
 ;; Version: 0.01
-;; Package-Requires: (cl)
+;; Package-Requires: cl
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

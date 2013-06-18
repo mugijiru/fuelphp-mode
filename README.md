@@ -26,3 +26,6 @@ FuelPHPマイナーモードが有効な時には以下のコマンドが使用�
 | C-c ; f c | Controllerファイルを開く |
 | C-c ; f v | Viewファイルを開く       |
 
+ライセンス
+----------
+&copy; 2013  Mugijiru. This project is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. license. See LICENSE for details.
