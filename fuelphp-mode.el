@@ -89,6 +89,14 @@ flatten nested alist."
     (if dir
         (fuelphp-oil-execute command))))
 
+(defun fuelphp-rgrep ()
+  (interactive)
+  (grep-compute-defaults)
+  (let ((regex))
+    (funcall 'rgrep (read-from-minibuffer "search for: " regex)
+             "*.*"
+             (concat (fuelphp-root) "/fuel/app"))))
+
 (defun fuelphp-oil-execute (command)
   "Execute oil command."
   (pop-to-buffer
