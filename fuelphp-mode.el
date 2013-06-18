@@ -32,6 +32,7 @@
     (define-key map (kbd "C-c . f m") 'fuelphp-find-model)
     (define-key map (kbd "C-c . f v") 'fuelphp-find-view)
     (define-key map (kbd "C-c . s") 'fuelphp-server)
+    (define-key map (kbd "C-c . c") 'fuelphp-console)
     (define-key map (kbd "C-c . g") 'fuelphp-rgrep)
     map)
   "Keymap for `fuelphp-mode'.")
@@ -89,6 +90,15 @@ flatten nested alist."
         (dir (fuelphp-root)))
     (if dir
         (fuelphp-oil-execute command))))
+
+(defun fuelphp-console ()
+  "Start FuelPHP console."
+  (interactive)
+  (let ((command "console")
+        (dir (fuelphp-root)))
+    (if dir
+        (fuelphp-oil-execute command))))
+
 
 (defun fuelphp-rgrep ()
   (interactive)
