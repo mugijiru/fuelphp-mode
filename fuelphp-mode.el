@@ -56,6 +56,21 @@ flatten nested alist."
           do (push item ret-list))
     (reverse ret-list)))
 
+(defun fuelphp-server ()
+  "Start FuelPHP webserver."
+  (interactive)
+  (let ((command "server")
+        (dir (fuelphp-root)))
+    (if dir
+        (fuelphp-oil-execute command))))
+
+(defun fuelphp-oil-execute (command)
+  "Execute oil command."
+  (pop-to-buffer
+   (save-excursion
+       (cd (fuelphp-root))
+       (make-comint "oil server" "php" nil "oil" command))))
+
 (defun fuelphp-find-model ()
   "今いるディレクトリが
 fuelphpのプロジェクト内の時に
