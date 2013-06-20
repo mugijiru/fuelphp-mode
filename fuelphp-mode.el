@@ -26,6 +26,17 @@
 
 
 (require 'cl)
+
+(defgroup fuelphp nil
+  "fuelphp-mode カスタマイズ"
+  :prefix "fuelphp-"
+  :group 'fuelphp)
+
+(defcustom fuelphp-tags-file-name
+  "TAGS"
+  "FuelPHPプロジェクトのTAGファイルのPATH"
+  :group 'fuelphp)
+
 (defvar fuelphp-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c . f c") 'fuelphp-find-controller)
@@ -192,9 +203,13 @@ If not FuelPHP directory, then return nil."
 
 (defun fuelphp-launch ()
 "launch fuelphp-mode"
-  (let ((root (fuelphp-root)))
+  (let* ((root (fuelphp-root))
+        (tag-file-path (concat root "/" fuelphp-tags-file-name)))
     (if root
-        (fuelphp-mode 1)
+        (progn
+          (set (make-local-variable 'tags-file-name)
+               (and (file-exists-p tag-file-path) tag-file-path))
+          (fuelphp-mode 1))
       (fuelphp-mode -1))))
 
 (defadvice cd (after fuelphp-on-cd activate)
