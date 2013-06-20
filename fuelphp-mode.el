@@ -209,8 +209,21 @@ If not FuelPHP directory, then return nil."
         (progn
           (set (make-local-variable 'tags-file-name)
                (and (file-exists-p tag-file-path) tag-file-path))
+          (add-hook 'after-save-hook 'fuelphp-create-tags nil t)
           (fuelphp-mode 1))
       (fuelphp-mode -1))))
+
+(defun fuelphp-create-tags ()
+  "create etags for the fuelphp project"
+  (interactive)
+  (let ((root (fuelphp-root)))
+    (cd root)
+    (message root)
+    (shell-command
+     (format "find %s -type f -name '*.php' | etags -R -f %s -"
+             root
+             fuelphp-tags-file-name)
+     nil nil)))
 
 (defadvice cd (after fuelphp-on-cd activate)
   (fuelphp-launch))
