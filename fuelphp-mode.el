@@ -100,7 +100,9 @@ flatten nested alist."
   (let ((command "server")
         (dir (fuelphp-root)))
     (if dir
-        (fuelphp-oil-execute command))))
+        (if (<= 1.6 (fuelphp-version))
+            (fuelphp-oil-execute command)
+          (message "'fuelphp-server' command could not execute version 1.5 or earlier")))))
 
 (defun fuelphp-console ()
   "Start FuelPHP console."
