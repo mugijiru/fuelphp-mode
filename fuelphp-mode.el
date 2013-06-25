@@ -126,6 +126,18 @@ flatten nested alist."
        (cd (fuelphp-root))
        (make-comint "oil server" "php" nil "oil" command))))
 
+(defun fuelphp-oil-execute-and-get-result (command)
+  "Execute oil command and return command output."
+  (let ((dir (fuelphp-root)))
+    (with-current-buffer "*oil*"
+      (save-excursion
+        (erase-buffer)
+        (cd dir)
+        (call-process "php" nil "*oil*" nil "oil" command)
+        (buffer-string)))))
+
+;; call-process program &optional infile buffer-name display &rest args
+
 (defun fuelphp-find-model ()
   "今いるディレクトリが
 fuelphpのプロジェクト内の時に
@@ -224,6 +236,27 @@ If not FuelPHP directory, then return nil."
              root
              fuelphp-tags-file-name)
      nil nil)))
+
+(defun fuelphp-version ()
+  "Get fuelphp version."
+  (string-to-number (fuelphp-version-str)))
+
+(defun fuelphp-version-str ()
+  "Get fuelphp version."
+  (substring (fuelphp-version-full) 6 9))
+
+(defun fuelphp-version-full ()
+  "Get fuelphp version full information."
+  (let ((dir (fuelphp-root))
+        (command "--version"))
+    (if dir
+        (let ((version-str (fuelphp-oil-execute-and-get-result command)))
+          (replace-regexp-in-string "[\n\r]+$" "" version-str)))))
+
+(defun fuelphp-version-minibuffer ()
+  "display fuelphp version full information."
+  (interactive)
+  (message (fuelphp-version-full)))
 
 (defadvice cd (after fuelphp-on-cd activate)
   (fuelphp-launch))
