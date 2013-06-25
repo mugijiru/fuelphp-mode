@@ -44,6 +44,8 @@
     (define-key map (kbd "C-c . f v") 'fuelphp-find-view)
     (define-key map (kbd "C-c . o s") 'fuelphp-server)
     (define-key map (kbd "C-c . o c") 'fuelphp-console)
+    (define-key map (kbd "C-c . o g") 'fuelphp-generate)
+    (define-key map (kbd "C-c . V") 'fuelphp-version)
     (define-key map (kbd "C-c . g") 'fuelphp-rgrep)
     map)
   "Keymap for `fuelphp-mode'.")
@@ -112,6 +114,21 @@ flatten nested alist."
     (if dir
         (fuelphp-oil-execute command))))
 
+(defun fuelphp-generate ()
+  "execute oil generate"
+  (interactive)
+  (let* ((types '("controller" "model" "migration" "scaffold" "views"))
+         (type (completing-read "ganerate type: "
+                         types
+                         nil
+                         t))
+         (options (split-string (read-string "options: "))))
+     (with-current-buffer "*oil generate*"
+       (erase-buffer))
+     (pop-to-buffer
+      (save-excursion
+        (cd (fuelphp-root))
+        (apply 'make-comint "oil generate" "php" nil "oil" "g" type options)))))
 
 (defun fuelphp-rgrep ()
   (interactive)
