@@ -148,7 +148,7 @@ flatten nested alist."
 (defun fuelphp-oil-execute-and-get-result (command)
   "Execute oil command and return command output."
   (let ((dir (fuelphp-root)))
-    (with-current-buffer "*oil*"
+    (with-current-buffer (get-buffer-create "*oil*")
       (save-excursion
         (erase-buffer)
         (cd dir)
