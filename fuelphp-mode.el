@@ -248,13 +248,15 @@ If not FuelPHP directory, then return nil."
   "create etags for the fuelphp project"
   (interactive)
   (let ((root (fuelphp-root)))
-    (cd root)
-    (message root)
-    (shell-command
-     (format "find %s -type f -name '*.php' | etags -R -f %s -"
-             root
-             fuelphp-tags-file-name)
-     nil nil)))
+    (save-excursion
+      (with-temp-buffer
+        (switch-to-buffer (current-buffer))
+        (cd root)
+        (shell-command
+         (format "find %s -type f -name '*.php' | etags -R -f %s -"
+                 root
+                 fuelphp-tags-file-name)
+         nil nil)))))
 
 (defun fuelphp-version ()
   "Get fuelphp version."
