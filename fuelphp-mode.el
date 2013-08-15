@@ -133,6 +133,8 @@ flatten nested alist."
 (defun fuelphp-rgrep ()
   (interactive)
   (grep-compute-defaults)
+  (when (get-buffer "*grep*")
+    (kill-buffer (get-buffer "*grep*")))
   (let ((regex))
     (funcall 'rgrep (read-from-minibuffer "search for: " regex)
              "*.*"
