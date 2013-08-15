@@ -242,6 +242,12 @@ If not FuelPHP directory, then return nil."
         (progn
           (set (make-local-variable 'tags-file-name)
                (and (file-exists-p tag-file-path) tag-file-path))
+          (make-local-variable 'grep-find-ignored-directories)
+          (add-to-list 'grep-find-ignored-directories "tmp")
+          (add-to-list 'grep-find-ignored-directories "logs")
+          (add-to-list 'grep-find-ignored-directories "vendor")
+          (add-to-list 'grep-find-ignored-directories "core")
+
           (add-hook 'after-save-hook 'fuelphp-create-tags nil t)
           (fuelphp-mode 1))
       (fuelphp-mode -1))))
