@@ -42,6 +42,8 @@
     (define-key map (kbd "C-c . f c") 'fuelphp-find-controller)
     (define-key map (kbd "C-c . f m") 'fuelphp-find-model)
     (define-key map (kbd "C-c . f v") 'fuelphp-find-view)
+    (define-key map (kbd "C-c . f t") 'fuelphp-find-task)
+    (define-key map (kbd "C-c . f u") 'fuelphp-find-phpunit)
     (define-key map (kbd "C-c . o s") 'fuelphp-server)
     (define-key map (kbd "C-c . o c") 'fuelphp-console)
     (define-key map (kbd "C-c . o g") 'fuelphp-generate)
@@ -222,6 +224,45 @@ Find View files in FuelPHP's project
                           if (string-match "\\.php$" dir-name)
                           collect dir-name))))))))
 
+(defun fuelphp-find-task ()
+  "今いるディレクトリが
+fuelphpのプロジェクト内の時に
+taskをfindするメソッド。
+
+Find Task files in FuelPHP's project
+"
+  (interactive)
+  (let ((root (fuelphp-root))
+        (path "/fuel/app/tasks/"))
+    (if root
+        (find-file
+         (concat root "/" path
+                 (ido-completing-read
+                  "Task: "
+                  (let ((dir-names (fuelphp-recursive-directory-files (concat root path))))
+                    (loop for dir-name in dir-names
+                          if (string-match "\\.php$" dir-name)
+                          collect dir-name))))))))
+
+(defun fuelphp-find-phpunit ()
+  "今いるディレクトリが
+fuelphpのプロジェクト内の時に
+テストファイルをfindするメソッド。
+
+Find PHPUnit Test files in FuelPHP's project
+"
+  (interactive)
+  (let ((root (fuelphp-root))
+        (path "/fuel/app/tests/"))
+    (if root
+        (find-file
+         (concat root "/" path
+                 (ido-completing-read
+                  "Test: "
+                  (let ((dir-names (fuelphp-recursive-directory-files (concat root path))))
+                    (loop for dir-name in dir-names
+                          if (string-match "\\.php$" dir-name)
+                          collect dir-name))))))))
 
 (defun fuelphp-root (&optional dir)
   "Find FuelPHP Project root directory.
@@ -261,7 +302,7 @@ If not FuelPHP directory, then return nil."
         (switch-to-buffer (current-buffer))
         (cd root)
         (shell-command
-         (format "find %s -type f -name '*.php' | etags -R -f %s -"
+         (format "find %s/fuel/app/classes -type f -name '*.php' | etags -R -f %s -"
                  root
                  fuelphp-tags-file-name)
          nil nil)))))
